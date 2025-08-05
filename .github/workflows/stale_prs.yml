@@ -28,4 +28,4 @@ jobs:
           DAYS_STALE: 2
           DAYS_CLOSE: 7
         run: |
-          python stale_prs.py
+          python .github/scripts/stale_prs.py
