@@ -1,0 +1,31 @@
+name: Organization PR Stale Report and Auto Close
+
+on:
+  schedule:
+    - cron: '30 13 * * *'  # 8:30am EST / 9:30am EDT
+    - cron: '0 22 * * *'   # 5:00pm EST / 6:00pm EDT
+  workflow_dispatch:
+
+jobs:
+  scan-org-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests PyGithub tabulate
+
+      - name: Scan, close, and report PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.ORG_PAT }}
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          ORG_NAME: your-org-name # Change this to your GitHub organization
+          DAYS_STALE: 2
+          DAYS_CLOSE: 7
+        run: |
+          python .github/scripts/stale_prs.py
